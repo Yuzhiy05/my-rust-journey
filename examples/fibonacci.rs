@@ -1,4 +1,4 @@
-use std::io::{self, Read};
+use std::io;
 
 fn f(n: i32) {
     let mut a: i32 = 1;

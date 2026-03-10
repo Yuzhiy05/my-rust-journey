@@ -1,4 +1,4 @@
-use rand::{Rng, RngExt};
+use rand::RngExt;
 use std::cmp;
 use std::io;
 fn main() {
