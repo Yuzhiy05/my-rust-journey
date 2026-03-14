@@ -1,89 +1,57 @@
-# Rust Learning Project
+# My Rust Journey
 
-一个用于学习 Rust 的标准项目结构，方便编写和运行多个示例程序。
+Rust 学习仓库，当前分为三大类内容：
 
-![1](./assets/images/1.png)
+1. `examples/`：Rust 语法学习示例（变量、流程控制、函数、结构体等）
+2. `src/AbbottBarcodeGeneration`：条码生成项目
+3. `src/LotID-Codec`：Lot ID 编解码项目
 
-## 项目结构
+另外，`docs/` 用于编写和整理项目文档。
+
+## 目录
 
 ```txt
-rust-learning/
+my-rust-journey/
+├── examples/
+├── docs/
 ├── src/
-│   ├── lib.rs          # 库文件，放置可复用的函数
-│   └── main.rs         # 主程序入口
-├── examples/           # 示例程序目录
-│   ├── hello.rs
-│   ├── variables.rs
-│   └── functions.rs
-├── Cargo.toml          # 项目配置文件
-└── README.md
+│   ├── AbbottBarcodeGeneration/
+│   ├── LotID-Codec/
+│   └── lib.rs
+└── Cargo.toml
 ```
 
-## 快速开始
+## 运行与构建
 
-### 运行主程序
-
-```bash
-cargo run
-```
-
-### 运行示例程序
+### examples（语法示例）
 
 ```bash
-# 列出所有示例
-cargo run --example
-
-# 运行特定示例
+# 运行某个示例
 cargo run --example hello
-cargo run --example variables
-cargo run --example functions
+
+# 构建全部示例
+cargo build --examples
 ```
 
-### 添加新的示例
-
-1. 在 `examples/` 目录下创建新的 `.rs` 文件，例如 `examples/my_example.rs`
-2. 编写代码：
-
-    ```rust
-    fn main() {
-        println!("这是我的示例");
-    }
-    ```
-
-3. 运行：
-
-    ```bash
-    cargo run --example my_example
-    ```
-
-### 运行测试
+### AbbottBarcodeGeneration（src 下项目）
 
 ```bash
-cargo test
+cargo run --bin AbbottBarcodeGeneration
+cargo build --bin AbbottBarcodeGeneration --release
 ```
 
-### 构建项目
+### LotID-Codec（src 下项目）
 
 ```bash
-# 开发模式
-cargo build
-
-# 发布模式
-cargo build --release
+cargo run --bin LotID-Codec
+cargo build --bin LotID-Codec --release
 ```
-
-## 提示
-
-- 所有 examples 文件都可以使用 `lib.rs` 中定义的公共函数
-- 使用 `use rust_learning::函数名;` 来引入库函数
-- 每个 example 文件都是独立的，互不影响
-- 示例程序会自动被 Cargo 识别，无需手动配置
 
 ## 常用命令
 
 ```bash
-cargo check          # 快速检查代码错误（不生成可执行文件）
-cargo fmt            # 格式化代码
-cargo clippy         # 代码检查和优化建议
-cargo doc --open     # 生成并打开文档
+cargo test
+cargo check
+cargo fmt
+cargo clippy
 ```

@@ -119,4 +119,3 @@ int main()
 ```bash
 cargo run --bin LotID-Codec
 ```
-
