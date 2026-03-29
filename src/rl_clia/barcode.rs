@@ -7,6 +7,11 @@ const BARCODE_H: u32 = 300;
 pub const LABEL_W: u32 = 660;
 pub const LABEL_H: u32 = 580;
 
+struct LabelLayout {
+    barcode_y: u32,
+    footer_y: i32,
+}
+
 #[derive(Debug, Clone, Copy)]
 pub enum ImageType {
     ReagentInformation,
@@ -64,9 +69,10 @@ pub fn draw_barcode_with_text(
     test_counts: &str,
 ) -> GrayImage {
     let mut canvas = GrayImage::from_pixel(LABEL_W, LABEL_H, image::Luma([255]));
-    // Paste barcode centered horizontally, at y=130
+    let layout = layout_for(image_type);
+    // Paste barcode centered horizontally at the per-label vertical position.
     let bx = (LABEL_W - BARCODE_W) / 2;
-    let by = 130u32;
+    let by = layout.barcode_y;
     for y in 0..barcode.height().min(LABEL_H.saturating_sub(by)) {
         for x in 0..barcode.width().min(LABEL_W.saturating_sub(bx)) {
             canvas.put_pixel(bx + x, by + y, *barcode.get_pixel(x, y));
@@ -82,9 +88,22 @@ pub fn draw_barcode_with_text(
             prod_date,
             expire_date,
             test_counts,
+            &layout,
         );
     }
     canvas
+}
+
+fn layout_for(image_type: ImageType) -> LabelLayout {
+    let barcode_y = match image_type {
+        ImageType::ReagentInformation => 130,
+        ImageType::QualityControl | ImageType::CalibrationProduct => 98,
+        ImageType::ExcitationFluidA | ImageType::ExcitationFluidB => 82,
+    };
+    LabelLayout {
+        barcode_y,
+        footer_y: (barcode_y + BARCODE_H + 20) as i32,
+    }
 }
 
 fn load_font() -> Option<ab_glyph::FontArc> {
@@ -123,6 +142,7 @@ fn render_labels(
     prod_date: &str,
     expire_date: &str,
     test_counts: &str,
+    layout: &LabelLayout,
 ) {
     let black = image::Luma([0]);
 
@@ -133,7 +153,7 @@ fn render_labels(
         ImageType::QualityControl => "质控品二维码",
         ImageType::CalibrationProduct => "校准品二维码",
     };
-    draw_centered(canvas, font, 28.0, title, 35, black);
+    draw_centered_bold(canvas, font, 32.0, title, 38, black);
 
     if matches!(image_type, ImageType::ReagentInformation) {
         draw_centered(
@@ -159,9 +179,7 @@ fn render_labels(
         draw_centered(canvas, font, 24.0, project_name, 72, black);
     }
 
-    // Barcode at y=130, height=300 → ends at y=430
-    // Text below starts at y=440
-    let y0 = 450i32;
+    let y0 = layout.footer_y;
     draw_centered(
         canvas,
         font,
@@ -242,6 +260,20 @@ fn draw_centered(
         cursor += advance;
         last_id = Some(gid);
     }
+}
+
+fn draw_centered_bold(
+    img: &mut GrayImage,
+    font: &ab_glyph::FontArc,
+    px: f32,
+    text: &str,
+    y: i32,
+    color: image::Luma<u8>,
+) {
+    draw_centered(img, font, px, text, y, color);
+    draw_centered(img, font, px, text, y, color);
+    draw_centered(img, font, px, text, y + 1, color);
+    draw_centered(img, font, px, text, y, color);
 }
 
 /// Generate A4 PDF with barcode images
