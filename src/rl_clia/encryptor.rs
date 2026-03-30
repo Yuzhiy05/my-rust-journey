@@ -1,6 +1,8 @@
 use aes::cipher::{block_padding::Pkcs7, BlockDecryptMut, BlockEncryptMut, KeyIvInit};
 
+/// CBC 模式下的 AES-256 加密器。
 type Aes256CbcEnc = cbc::Encryptor<aes::Aes256>;
+/// CBC 模式下的 AES-256 解密器。
 type Aes256CbcDec = cbc::Decryptor<aes::Aes256>;
 
 const KEY: &[u8; 32] = b"12345678123456781234567812345678";
@@ -8,6 +10,7 @@ const IV: &[u8; 16] = &[
     0x1f, 0x32, 0x43, 0x51, 0x56, 0x98, 0xaf, 0xed, 0xab, 0xc8, 0x21, 0x45, 0x63, 0x72, 0xac, 0xfc,
 ];
 
+/// 对业务明文执行 AES-256-CBC 加密，并返回 Base64 文本。
 pub fn encrypt(plaintext: &str) -> Result<String, String> {
     let pt = plaintext.as_bytes();
     let mut buf = vec![0u8; pt.len() + 32]; // extra for padding
@@ -21,6 +24,7 @@ pub fn encrypt(plaintext: &str) -> Result<String, String> {
     ))
 }
 
+/// 对 Base64 密文执行解密，并还原为 UTF-8 文本。
 pub fn decrypt(b64_input: &str) -> Result<String, String> {
     let ciphertext =
         base64::Engine::decode(&base64::engine::general_purpose::STANDARD, b64_input.trim())
@@ -33,6 +37,7 @@ pub fn decrypt(b64_input: &str) -> Result<String, String> {
     String::from_utf8(decrypted.to_vec()).map_err(|e| format!("编码错误: {e}"))
 }
 
+/// 将名称中的特殊字符替换成设备端约定的编码形式。
 fn replace_beta(name: &str) -> &str {
     match name {
         "S100β" => "S100B",
@@ -42,6 +47,7 @@ fn replace_beta(name: &str) -> &str {
     }
 }
 
+/// 组装试剂条码明文并加密。
 pub fn compose_reagent(
     project_name: &str,
     project_id: &str,
@@ -86,6 +92,7 @@ pub fn compose_reagent(
     encrypt(&s)
 }
 
+/// 组装校准品条码明文并加密。
 pub fn compose_calibration(
     project_name: &str,
     project_id: &str,
@@ -110,6 +117,7 @@ pub fn compose_calibration(
     encrypt(&s)
 }
 
+/// 组装耗材条码明文并加密。
 pub fn compose_consumable(
     project_name: &str,
     lot: &str,
@@ -130,6 +138,7 @@ pub fn compose_consumable(
     encrypt(&s)
 }
 
+/// 组装质控品条码明文并加密。
 pub fn compose_quality(
     project_name: &str,
     project_id: &str,

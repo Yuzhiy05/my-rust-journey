@@ -2,16 +2,30 @@ use ab_glyph::{Font, ScaleFont};
 use image::GrayImage;
 use zxingcpp::*;
 
+/// 标签中 PDF417 条码区域的目标宽度，单位为像素。
 const BARCODE_W: u32 = 600;
+
+/// 标签中 PDF417 条码区域的目标高度，单位为像素。
 const BARCODE_H: u32 = 300;
+
+/// 单张标签导出图的总宽度，单位为像素。
 pub const LABEL_W: u32 = 660;
+
+/// 单张标签导出图的总高度，单位为像素。
 pub const LABEL_H: u32 = 580;
 
+/// 底部“产品批号 / 生产日期 / 失效日期”三行文字的字号。
+const FOOTER_FONT_PX: f32 = 23.0;
+
+/// 不同标签类型对应的版式参数。
 struct LabelLayout {
+    /// 条码区域的起始纵坐标。
     barcode_y: u32,
+    /// 底部说明文字首行的纵坐标。
     footer_y: i32,
 }
 
+/// 标签图像的业务类型。
 #[derive(Debug, Clone, Copy)]
 pub enum ImageType {
     ReagentInformation,
@@ -21,7 +35,7 @@ pub enum ImageType {
     CalibrationProduct,
 }
 
-/// Convert grayscale image to Slint Image for preview
+/// 将灰度位图转换为 Slint 可直接显示的预览图。
 pub fn gray_to_slint_image(gray: &GrayImage) -> slint::Image {
     let w = gray.width();
     let h = gray.height();
@@ -33,6 +47,7 @@ pub fn gray_to_slint_image(gray: &GrayImage) -> slint::Image {
     slint::Image::from_rgba8(buffer)
 }
 
+/// 生成 PDF417 条码灰度图。
 pub fn generate_barcode(data: &str) -> Result<GrayImage, String> {
     let barcode = create(BarcodeFormat::PDF417)
         .options("columns:3,eclevel:0")
@@ -59,6 +74,7 @@ pub fn generate_barcode(data: &str) -> Result<GrayImage, String> {
     Ok(gray)
 }
 
+/// 将条码与说明文字合成为最终标签图。
 pub fn draw_barcode_with_text(
     barcode: &GrayImage,
     image_type: ImageType,
@@ -94,6 +110,7 @@ pub fn draw_barcode_with_text(
     canvas
 }
 
+/// 根据业务类型返回标签布局参数。
 fn layout_for(image_type: ImageType) -> LabelLayout {
     let barcode_y = match image_type {
         ImageType::ReagentInformation => 130,
@@ -106,6 +123,7 @@ fn layout_for(image_type: ImageType) -> LabelLayout {
     }
 }
 
+/// 尝试从系统字体中加载可用字体。
 fn load_font() -> Option<ab_glyph::FontArc> {
     // Try TTF files first (ab_glyph handles single TTF better than TTC)
     let candidates: &[&str] = if cfg!(target_os = "windows") {
@@ -133,6 +151,7 @@ fn load_font() -> Option<ab_glyph::FontArc> {
     None
 }
 
+/// 在标签画布上绘制标题与底部业务说明。
 fn render_labels(
     canvas: &mut GrayImage,
     font: &ab_glyph::FontArc,
@@ -183,7 +202,7 @@ fn render_labels(
     draw_centered(
         canvas,
         font,
-        20.0,
+        FOOTER_FONT_PX,
         &format!("产品批号: {lot_number}"),
         y0,
         black,
@@ -191,7 +210,7 @@ fn render_labels(
     draw_centered(
         canvas,
         font,
-        20.0,
+        FOOTER_FONT_PX,
         &format!("生产日期: {prod_date}"),
         y0 + 40,
         black,
@@ -199,13 +218,14 @@ fn render_labels(
     draw_centered(
         canvas,
         font,
-        20.0,
+        FOOTER_FONT_PX,
         &format!("失效日期: {expire_date}"),
         y0 + 80,
         black,
     );
 }
 
+/// 在画布水平居中位置绘制单行文本。
 fn draw_centered(
     img: &mut GrayImage,
     font: &ab_glyph::FontArc,
@@ -242,12 +262,7 @@ fn draw_centered(
             outlined.draw(|gx, gy, alpha: f32| {
                 let px = gx as i32 + bounds.min.x as i32;
                 let py = gy as i32 + bounds.min.y as i32;
-                if px >= 0
-                    && (px as u32) < LABEL_W
-                    && py >= 0
-                    && (py as u32) < LABEL_H
-                    && alpha > 0.1
-                {
+                if px >= 0 && (px as u32) < LABEL_W && py >= 0 && (py as u32) < LABEL_H {
                     let old = img.get_pixel(px as u32, py as u32)[0] as f32;
                     img.put_pixel(
                         px as u32,
@@ -262,6 +277,7 @@ fn draw_centered(
     }
 }
 
+/// 通过重复绘制与轻微偏移，生成较粗的文本效果。
 fn draw_centered_bold(
     img: &mut GrayImage,
     font: &ab_glyph::FontArc,
@@ -276,7 +292,7 @@ fn draw_centered_bold(
     draw_centered(img, font, px, text, y, color);
 }
 
-/// Generate A4 PDF with barcode images
+/// 将多张标签图按 A4 网格排版导出为 PDF。
 pub fn generate_pdf(images: &[GrayImage], output_path: &str) -> Result<(), String> {
     use miniz_oxide::deflate::compress_to_vec_zlib;
     use pdf_writer::{Content, Filter, Name, Pdf, Rect, Ref};

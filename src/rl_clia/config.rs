@@ -1,6 +1,9 @@
 use serde::Deserialize;
 use std::path::Path;
 
+/// 项目名称与项目编号的配置。
+///
+/// 数据优先从 `Setting/project.json` 读取；如果读取失败，则回退到内置默认值。
 #[derive(Debug, Clone, Deserialize)]
 pub struct ProjectConfig {
     #[serde(rename = "projectIDList")]
@@ -9,6 +12,7 @@ pub struct ProjectConfig {
     pub project_name_list: Vec<String>,
 }
 
+/// 读取项目配置，并在失败时返回内置默认值。
 pub fn load_project_config() -> ProjectConfig {
     let path = Path::new("Setting/project.json");
     if let Ok(data) = std::fs::read_to_string(path) {
