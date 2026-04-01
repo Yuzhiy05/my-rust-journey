@@ -1,15 +1,45 @@
 import {
-    Button, LineEdit, ComboBox, TextEdit,
-    VerticalBox, HorizontalBox, Palette, ScrollView,
+    Button,
+    CheckBox,
+    ComboBox,
+    LineEdit,
+    Palette,
+    ScrollView,
+    TextEdit,
 } from "std-widgets.slint";
+
+export struct PreviewElementData {
+    id: string,
+    name: string,
+    kind: string,
+    text: string,
+    x: float,
+    y: float,
+    width: float,
+    height: float,
+    font_size: float,
+    bold: bool,
+    visible: bool,
+}
 
 component FormField inherits HorizontalLayout {
     in property <string> label;
     in-out property <string> value;
     in property <bool> readonly: false;
     spacing: 8px;
-    Text { text: root.label; vertical-alignment: center; min-width: 72px; font-size: 14px; font-weight: 600; }
-    LineEdit { text <=> root.value; read-only: root.readonly; horizontal-stretch: 1; }
+    Text {
+        text: root.label;
+        vertical-alignment: center;
+        min-width: 72px;
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+    LineEdit {
+        text <=> root.value;
+        read-only: root.readonly;
+        horizontal-stretch: 1;
+    }
 }
 
 component FormCombo inherits HorizontalLayout {
@@ -17,16 +47,60 @@ component FormCombo inherits HorizontalLayout {
     in-out property <int> index;
     in property <[string]> model;
     spacing: 8px;
-    Text { text: root.label; vertical-alignment: center; min-width: 72px; font-size: 14px; font-weight: 600; }
-    ComboBox { current-index <=> root.index; model: root.model; horizontal-stretch: 1; }
+    Text {
+        text: root.label;
+        vertical-alignment: center;
+        min-width: 72px;
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+    ComboBox {
+        current-index <=> root.index;
+        model: root.model;
+        horizontal-stretch: 1;
+    }
 }
 
 component SmallField inherits HorizontalLayout {
     in property <string> label;
     in-out property <string> value;
     spacing: 4px;
-    Text { text: root.label; vertical-alignment: center; font-size: 14px; min-width: 36px; }
-    LineEdit { text <=> root.value; horizontal-stretch: 1; }
+    Text {
+        text: root.label;
+        vertical-alignment: center;
+        font-size: 14px;
+        min-width: 36px;
+    }
+
+    LineEdit {
+        text <=> root.value;
+        horizontal-stretch: 1;
+    }
+}
+
+component SettingField inherits HorizontalLayout {
+    in property <string> label;
+    in-out property <string> value;
+    in property <bool> enabled: true;
+    callback edited(string);
+    spacing: 6px;
+    Text {
+        text: root.label;
+        vertical-alignment: center;
+        min-width: 40px;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    LineEdit {
+        text <=> root.value;
+        enabled: root.enabled;
+        horizontal-stretch: 1;
+        edited(text) => {
+            root.edited(text);
+        }
+    }
 }
 
 component NavButton inherits Rectangle {
@@ -36,8 +110,20 @@ component NavButton inherits Rectangle {
     height: 48px;
     background: root.active ? #0A9CEE : transparent;
     border-radius: 6px;
-    Text { text: root.label; color: root.active ? white : #333; font-size: 14px; font-weight: 600; horizontal-alignment: center; vertical-alignment: center; }
-    TouchArea { clicked => { root.clicked(); } }
+    Text {
+        text: root.label;
+        color: root.active ? white : #333;
+        font-size: 14px;
+        font-weight: 600;
+        horizontal-alignment: center;
+        vertical-alignment: center;
+    }
+
+    TouchArea {
+        clicked => {
+            root.clicked();
+        }
+    }
 }
 
 export component RLCLIAWindow inherits Window {
@@ -55,10 +141,14 @@ export component RLCLIAWindow inherits Window {
     in-out property <string> reagent-open-days: "28";
     in-out property <string> reagent-serial-count: "1";
     in-out property <int> reagent-unit-index: 0;
-    in-out property <string> reagent-param-a; in-out property <string> reagent-param-b;
-    in-out property <string> reagent-param-c; in-out property <string> reagent-param-d;
-    in-out property <string> reagent-range-low; in-out property <string> reagent-range-upper;
-    in-out property <string> reagent-limit-low; in-out property <string> reagent-limit-upper;
+    in-out property <string> reagent-param-a;
+    in-out property <string> reagent-param-b;
+    in-out property <string> reagent-param-c;
+    in-out property <string> reagent-param-d;
+    in-out property <string> reagent-range-low;
+    in-out property <string> reagent-range-upper;
+    in-out property <string> reagent-limit-low;
+    in-out property <string> reagent-limit-upper;
 
     in-out property <int> calib-project-index: 0;
     in-out property <string> calib-lot;
@@ -66,7 +156,8 @@ export component RLCLIAWindow inherits Window {
     in-out property <string> calib-valid-days: "365";
     in-out property <string> calib-expire-date;
     in-out property <string> calib-quantity: "1";
-    in-out property <string> calib-c1; in-out property <string> calib-c2;
+    in-out property <string> calib-c1;
+    in-out property <string> calib-c2;
 
     in-out property <int> consumable-type-index: 0;
     in-out property <string> consumable-lot;
@@ -83,24 +174,29 @@ export component RLCLIAWindow inherits Window {
     in-out property <string> quality-valid-days: "365";
     in-out property <string> quality-expire-date;
     in-out property <string> quality-quantity: "1";
-    in-out property <string> quality-q1; in-out property <string> quality-sd1;
-    in-out property <string> quality-q2; in-out property <string> quality-sd2;
+    in-out property <string> quality-q1;
+    in-out property <string> quality-sd1;
+    in-out property <string> quality-q2;
+    in-out property <string> quality-sd2;
 
-    in-out property <image> preview-reagent;
-    in-out property <bool> has-preview-reagent: false;
-    in-out property <image> preview-calibration;
-    in-out property <bool> has-preview-calibration: false;
-    in-out property <image> preview-consumable;
-    in-out property <bool> has-preview-consumable: false;
-    in-out property <image> preview-quality;
-    in-out property <bool> has-preview-quality: false;
+    in-out property <[PreviewElementData]> preview-elements: [];
+    in-out property <image> preview-barcode;
+    in-out property <bool> preview-barcode-visible: false;
+    in-out property <bool> layout-editor-ready: false;
 
-    out property <image> current-preview: enc-page == "reagent" ? preview-reagent : enc-page == "calibration" ? preview-calibration : enc-page == "consumable" ? preview-consumable : preview-quality;
-    out property <bool> has-current-preview: enc-page == "reagent" ? has-preview-reagent : enc-page == "calibration" ? has-preview-calibration : enc-page == "consumable" ? has-preview-consumable : has-preview-quality;
+    in-out property <bool> selected-has-element: false;
+    in-out property <string> selected-element-id;
+    in-out property <string> selected-element-name;
+    in-out property <string> selected-element-kind;
+    in-out property <string> selected-layout-x;
+    in-out property <string> selected-layout-y;
+    in-out property <string> selected-layout-width;
+    in-out property <string> selected-layout-height;
+    in-out property <string> selected-font-size;
+    in-out property <bool> selected-bold: false;
 
     in-out property <string> decrypt-input;
     in-out property <string> decrypt-output;
-
     in-out property <string> status: "就绪";
     in-out property <string> toast-msg;
     in-out property <bool> toast-visible: false;
@@ -109,175 +205,973 @@ export component RLCLIAWindow inherits Window {
     callback export-png(string);
     callback export-pdf(string);
     callback decrypt-data();
+    callback load-layout-page(string);
+    callback select-layout-element(string, string);
+    callback drag-layout-element(string, string, float, float);
+    callback update-selected-layout(string, string, string);
+    callback toggle-selected-bold(string, bool);
+    callback reset-layout-page(string);
     pure callback compute-expiry(string, string) -> string;
 
-    changed reagent-prod-date => { reagent-expire-date = compute-expiry(reagent-prod-date, reagent-valid-days); }
-    changed reagent-valid-days => { reagent-expire-date = compute-expiry(reagent-prod-date, reagent-valid-days); }
-    changed calib-prod-date => { calib-expire-date = compute-expiry(calib-prod-date, calib-valid-days); }
-    changed calib-valid-days => { calib-expire-date = compute-expiry(calib-prod-date, calib-valid-days); }
-    changed consumable-prod-date => { consumable-expire-date = compute-expiry(consumable-prod-date, consumable-valid-days); }
-    changed consumable-valid-days => { consumable-expire-date = compute-expiry(consumable-prod-date, consumable-valid-days); }
-    changed quality-prod-date => { quality-expire-date = compute-expiry(quality-prod-date, quality-valid-days); }
-    changed quality-valid-days => { quality-expire-date = compute-expiry(quality-prod-date, quality-valid-days); }
+    changed enc-page => {
+        load-layout-page(enc-page);
+    }
+    changed reagent-prod-date => {
+        reagent-expire-date = compute-expiry(reagent-prod-date, reagent-valid-days);
+    }
+    changed reagent-valid-days => {
+        reagent-expire-date = compute-expiry(reagent-prod-date, reagent-valid-days);
+    }
+    changed calib-prod-date => {
+        calib-expire-date = compute-expiry(calib-prod-date, calib-valid-days);
+    }
+    changed calib-valid-days => {
+        calib-expire-date = compute-expiry(calib-prod-date, calib-valid-days);
+    }
+    changed consumable-prod-date => {
+        consumable-expire-date = compute-expiry(consumable-prod-date, consumable-valid-days);
+    }
+    changed consumable-valid-days => {
+        consumable-expire-date = compute-expiry(consumable-prod-date, consumable-valid-days);
+    }
+    changed quality-prod-date => {
+        quality-expire-date = compute-expiry(quality-prod-date, quality-valid-days);
+    }
+    changed quality-valid-days => {
+        quality-expire-date = compute-expiry(quality-prod-date, quality-valid-days);
+    }
 
     title: "化学发光条码工具";
     icon: @image-url("../assets/RL-CLIA-icon.ico");
-    width: 980px;
-    height: 850px;
+    width: 1260px;
+    height: 900px;
 
-    // HOME
     if page == "home": VerticalLayout {
-        alignment: center; spacing: 32px;
-        Text { text: "化学发光条码信息生成工具"; font-size: 24px; font-weight: 700; horizontal-alignment: center; }
-        HorizontalLayout { alignment: center; spacing: 40px;
-            Rectangle { width: 200px; height: 140px; background: t1.has-hover ? #FF9030 : #FE8701; border-radius: 12px;
+        alignment: center;
+        spacing: 32px;
+        Text {
+            text: "化学发光条码信息生成工具";
+            font-size: 24px;
+            font-weight: 700;
+            horizontal-alignment: center;
+        }
+
+        HorizontalLayout {
+            alignment: center;
+            spacing: 40px;
+            Rectangle {
+                width: 200px;
+                height: 140px;
+                background: t1.has-hover ? #FF9030 : #FE8701;
+                border-radius: 12px;
                 animate background { duration: 200ms; }
-                Text { text: "加 密"; color: white; font-size: 28px; font-weight: 700; horizontal-alignment: center; vertical-alignment: center; }
-                t1 := TouchArea { clicked => { root.page = "enc"; } }
+                Text {
+                    text: "加 密";
+                    color: white;
+                    font-size: 28px;
+                    font-weight: 700;
+                    horizontal-alignment: center;
+                    vertical-alignment: center;
+                }
+
+                t1 := TouchArea {
+                    clicked => {
+                        root.page = "enc";
+                    }
+                }
             }
-            Rectangle { width: 200px; height: 140px; background: t2.has-hover ? #40DDAA : #37CC9D; border-radius: 12px;
+
+            Rectangle {
+                width: 200px;
+                height: 140px;
+                background: t2.has-hover ? #40DDAA : #37CC9D;
+                border-radius: 12px;
                 animate background { duration: 200ms; }
-                Text { text: "解 密"; color: white; font-size: 28px; font-weight: 700; horizontal-alignment: center; vertical-alignment: center; }
-                t2 := TouchArea { clicked => { root.page = "dec"; } }
+                Text {
+                    text: "解 密";
+                    color: white;
+                    font-size: 28px;
+                    font-weight: 700;
+                    horizontal-alignment: center;
+                    vertical-alignment: center;
+                }
+
+                t2 := TouchArea {
+                    clicked => {
+                        root.page = "dec";
+                    }
+                }
             }
         }
     }
 
-    // ENCRYPT
     if page == "enc": HorizontalLayout {
-        Rectangle { width: 130px; background: #F0F0F0;
-            VerticalLayout { padding: 10px; spacing: 6px;
-                NavButton { label: "首页"; active: false; clicked => { root.page = "home"; } }
-                NavButton { label: "试 剂"; active: enc-page == "reagent"; clicked => { enc-page = "reagent"; } }
-                NavButton { label: "校准品"; active: enc-page == "calibration"; clicked => { enc-page = "calibration"; } }
-                NavButton { label: "耗 材"; active: enc-page == "consumable"; clicked => { enc-page = "consumable"; } }
-                NavButton { label: "质控品"; active: enc-page == "quality"; clicked => { enc-page = "quality"; } }
+        Rectangle {
+            width: 130px;
+            background: #F0F0F0;
+            VerticalLayout {
+                padding: 10px;
+                spacing: 6px;
+                NavButton {
+                    label: "首页";
+                    active: false;
+                    clicked => {
+                        root.page = "home";
+                    }
+                }
+
+                NavButton {
+                    label: "试 剂";
+                    active: enc-page == "reagent";
+                    clicked => {
+                        enc-page = "reagent";
+                    }
+                }
+
+                NavButton {
+                    label: "校准品";
+                    active: enc-page == "calibration";
+                    clicked => {
+                        enc-page = "calibration";
+                    }
+                }
+
+                NavButton {
+                    label: "耗 材";
+                    active: enc-page == "consumable";
+                    clicked => {
+                        enc-page = "consumable";
+                    }
+                }
+
+                NavButton {
+                    label: "质控品";
+                    active: enc-page == "quality";
+                    clicked => {
+                        enc-page = "quality";
+                    }
+                }
             }
         }
 
-        HorizontalLayout { spacing: 12px; padding: 12px;
-            // Form area — each form has its own scroll with buttons inside
-            VerticalLayout { width: 440px;
-                if enc-page == "reagent": ScrollView { VerticalLayout { spacing: 8px; padding-bottom: 8px;
-                    Text { text: "试剂信息"; font-size: 16px; font-weight: 700; }
-                    FormCombo { label: "项目名称"; index <=> reagent-project-index; model: project-names; }
-                    FormField { label: "项目编号"; value: project-ids[reagent-project-index]; readonly: true; }
-                    FormField { label: "试剂批号"; value <=> reagent-lot; }
-                    FormField { label: "生产日期"; value <=> reagent-prod-date; }
-                    FormField { label: "有效天数"; value <=> reagent-valid-days; }
-                    FormField { label: "失效日期"; value: reagent-expire-date; readonly: true; }
-                    FormField { label: "测试/盒"; value <=> reagent-test-counts; }
-                    FormField { label: "开瓶天数"; value <=> reagent-open-days; }
-                    FormField { label: "数量"; value <=> reagent-serial-count; }
-                    FormCombo { label: "结果单位"; index <=> reagent-unit-index; model: ["pg/mL", "ng/mL", "mg/L", "ng/L", "IU/L"]; }
-                    Text { text: "曲线参数"; font-size: 13px; font-weight: 600; }
-                    HorizontalLayout { spacing: 8px; SmallField { label: "a"; value <=> reagent-param-a; } SmallField { label: "b"; value <=> reagent-param-b; } }
-                    HorizontalLayout { spacing: 8px; SmallField { label: "c"; value <=> reagent-param-c; } SmallField { label: "d"; value <=> reagent-param-d; } }
-                    Text { text: "结果参数"; font-size: 13px; font-weight: 600; }
-                    HorizontalLayout { spacing: 8px; SmallField { label: "下限"; value <=> reagent-range-low; } SmallField { label: "上限"; value <=> reagent-range-upper; } }
-                    HorizontalLayout { spacing: 8px; SmallField { label: "限低"; value <=> reagent-limit-low; } SmallField { label: "限高"; value <=> reagent-limit-upper; } }
-                    Rectangle { height: 12px; }
-                    HorizontalLayout { spacing: 10px;
-                        Button { text: "生成预览"; primary: true; clicked => { root.generate-preview("reagent"); } }
-                        Button { text: "导出PNG"; clicked => { root.export-png("reagent"); } }
-                        Button { text: "导出PDF"; clicked => { root.export-pdf("reagent"); } }
-                    }
-                    Text { text: status; color: #888; font-size: 11px; horizontal-alignment: right; }
-                }}
+        HorizontalLayout {
+            spacing: 12px;
+            padding: 12px;
+            VerticalLayout {
+                width: 450px;
+                if enc-page == "reagent": ScrollView {
+                    VerticalLayout {
+                        spacing: 8px;
+                        padding-bottom: 8px;
+                        Text {
+                            text: "试剂信息";
+                            font-size: 16px;
+                            font-weight: 700;
+                        }
 
-                if enc-page == "calibration": ScrollView { VerticalLayout { spacing: 8px; padding-bottom: 8px;
-                    Text { text: "校准品信息"; font-size: 16px; font-weight: 700; }
-                    FormCombo { label: "项目名称"; index <=> calib-project-index; model: project-names; }
-                    FormField { label: "项目编号"; value: project-ids[calib-project-index]; readonly: true; }
-                    FormField { label: "校准批号"; value <=> calib-lot; }
-                    FormField { label: "生产日期"; value <=> calib-prod-date; }
-                    FormField { label: "有效天数"; value <=> calib-valid-days; }
-                    FormField { label: "失效日期"; value: calib-expire-date; readonly: true; }
-                    FormField { label: "数量"; value <=> calib-quantity; }
-                    FormField { label: "C1 发光值"; value <=> calib-c1; }
-                    FormField { label: "C2 发光值"; value <=> calib-c2; }
-                    Rectangle { height: 12px; }
-                    HorizontalLayout { spacing: 10px;
-                        Button { text: "生成预览"; primary: true; clicked => { root.generate-preview("calibration"); } }
-                        Button { text: "导出PNG"; clicked => { root.export-png("calibration"); } }
-                        Button { text: "导出PDF"; clicked => { root.export-pdf("calibration"); } }
-                    }
-                    Text { text: status; color: #888; font-size: 11px; horizontal-alignment: right; }
-                }}
+                        FormCombo {
+                            label: "项目名称";
+                            index <=> reagent-project-index;
+                            model: project-names;
+                        }
 
-                if enc-page == "consumable": ScrollView { VerticalLayout { spacing: 8px; padding-bottom: 8px;
-                    Text { text: "耗材信息"; font-size: 16px; font-weight: 700; }
-                    FormCombo { label: "耗材类型"; index <=> consumable-type-index; model: ["激发液A", "激发液B"]; }
-                    FormField { label: "耗材批号"; value <=> consumable-lot; }
-                    FormField { label: "生产日期"; value <=> consumable-prod-date; }
-                    FormField { label: "有效天数"; value <=> consumable-valid-days; }
-                    FormField { label: "失效日期"; value: consumable-expire-date; readonly: true; }
-                    FormField { label: "可用频次"; value <=> consumable-freq; }
-                    FormField { label: "开瓶天数"; value <=> consumable-open-days; }
-                    FormField { label: "数量"; value <=> consumable-quantity; }
-                    Rectangle { height: 12px; }
-                    HorizontalLayout { spacing: 10px;
-                        Button { text: "生成预览"; primary: true; clicked => { root.generate-preview("consumable"); } }
-                        Button { text: "导出PNG"; clicked => { root.export-png("consumable"); } }
-                        Button { text: "导出PDF"; clicked => { root.export-pdf("consumable"); } }
-                    }
-                    Text { text: status; color: #888; font-size: 11px; horizontal-alignment: right; }
-                }}
+                        FormField {
+                            label: "项目编号";
+                            value: project-ids[reagent-project-index];
+                            readonly: true;
+                        }
 
-                if enc-page == "quality": ScrollView { VerticalLayout { spacing: 8px; padding-bottom: 8px;
-                    Text { text: "质控品信息"; font-size: 16px; font-weight: 700; }
-                    FormCombo { label: "项目名称"; index <=> quality-project-index; model: project-names; }
-                    FormField { label: "项目编号"; value: project-ids[quality-project-index]; readonly: true; }
-                    FormField { label: "质控批号"; value <=> quality-lot; }
-                    FormField { label: "生产日期"; value <=> quality-prod-date; }
-                    FormField { label: "有效天数"; value <=> quality-valid-days; }
-                    FormField { label: "失效日期"; value: quality-expire-date; readonly: true; }
-                    FormField { label: "数量"; value <=> quality-quantity; }
-                    HorizontalLayout { spacing: 8px; SmallField { label: "Q1"; value <=> quality-q1; } SmallField { label: "SD1"; value <=> quality-sd1; } }
-                    HorizontalLayout { spacing: 8px; SmallField { label: "Q2"; value <=> quality-q2; } SmallField { label: "SD2"; value <=> quality-sd2; } }
-                    Rectangle { height: 12px; }
-                    HorizontalLayout { spacing: 10px;
-                        Button { text: "生成预览"; primary: true; clicked => { root.generate-preview("quality"); } }
-                        Button { text: "导出PNG"; clicked => { root.export-png("quality"); } }
-                        Button { text: "导出PDF"; clicked => { root.export-pdf("quality"); } }
+                        FormField {
+                            label: "试剂批号";
+                            value <=> reagent-lot;
+                        }
+
+                        FormField {
+                            label: "生产日期";
+                            value <=> reagent-prod-date;
+                        }
+
+                        FormField {
+                            label: "有效天数";
+                            value <=> reagent-valid-days;
+                        }
+
+                        FormField {
+                            label: "失效日期";
+                            value: reagent-expire-date;
+                            readonly: true;
+                        }
+
+                        FormField {
+                            label: "测试/盒";
+                            value <=> reagent-test-counts;
+                        }
+
+                        FormField {
+                            label: "开瓶天数";
+                            value <=> reagent-open-days;
+                        }
+
+                        FormField {
+                            label: "数量";
+                            value <=> reagent-serial-count;
+                        }
+
+                        FormCombo {
+                            label: "结果单位";
+                            index <=> reagent-unit-index;
+                            model: ["pg/mL", "ng/mL", "mg/L", "ng/L", "IU/L"];
+                        }
+
+                        Text {
+                            text: "曲线参数";
+                            font-size: 13px;
+                            font-weight: 600;
+                        }
+
+                        HorizontalLayout {
+                            spacing: 8px;
+                            SmallField {
+                                label: "a";
+                                value <=> reagent-param-a;
+                            }
+
+                            SmallField {
+                                label: "b";
+                                value <=> reagent-param-b;
+                            }
+                        }
+
+                        HorizontalLayout {
+                            spacing: 8px;
+                            SmallField {
+                                label: "c";
+                                value <=> reagent-param-c;
+                            }
+
+                            SmallField {
+                                label: "d";
+                                value <=> reagent-param-d;
+                            }
+                        }
+
+                        Text {
+                            text: "结果参数";
+                            font-size: 13px;
+                            font-weight: 600;
+                        }
+
+                        HorizontalLayout {
+                            spacing: 8px;
+                            SmallField {
+                                label: "下限";
+                                value <=> reagent-range-low;
+                            }
+
+                            SmallField {
+                                label: "上限";
+                                value <=> reagent-range-upper;
+                            }
+                        }
+
+                        HorizontalLayout {
+                            spacing: 8px;
+                            SmallField {
+                                label: "限低";
+                                value <=> reagent-limit-low;
+                            }
+
+                            SmallField {
+                                label: "限高";
+                                value <=> reagent-limit-upper;
+                            }
+                        }
+
+                        Rectangle {
+                            height: 12px;
+                        }
+
+                        HorizontalLayout {
+                            spacing: 10px;
+                            Button {
+                                text: "生成预览";
+                                primary: true;
+                                clicked => {
+                                    root.generate-preview("reagent");
+                                }
+                            }
+
+                            Button {
+                                text: "导出PNG";
+                                clicked => {
+                                    root.export-png("reagent");
+                                }
+                            }
+
+                            Button {
+                                text: "导出PDF";
+                                clicked => {
+                                    root.export-pdf("reagent");
+                                }
+                            }
+                        }
+
+                        Text {
+                            text: status;
+                            color: #888;
+                            font-size: 11px;
+                            horizontal-alignment: right;
+                        }
                     }
-                    Text { text: status; color: #888; font-size: 11px; horizontal-alignment: right; }
-                }}
+                }
+
+                if enc-page == "calibration": ScrollView {
+                    VerticalLayout {
+                        spacing: 8px;
+                        padding-bottom: 8px;
+                        Text {
+                            text: "校准品信息";
+                            font-size: 16px;
+                            font-weight: 700;
+                        }
+
+                        FormCombo {
+                            label: "项目名称";
+                            index <=> calib-project-index;
+                            model: project-names;
+                        }
+
+                        FormField {
+                            label: "项目编号";
+                            value: project-ids[calib-project-index];
+                            readonly: true;
+                        }
+
+                        FormField {
+                            label: "校准批号";
+                            value <=> calib-lot;
+                        }
+
+                        FormField {
+                            label: "生产日期";
+                            value <=> calib-prod-date;
+                        }
+
+                        FormField {
+                            label: "有效天数";
+                            value <=> calib-valid-days;
+                        }
+
+                        FormField {
+                            label: "失效日期";
+                            value: calib-expire-date;
+                            readonly: true;
+                        }
+
+                        FormField {
+                            label: "数量";
+                            value <=> calib-quantity;
+                        }
+
+                        FormField {
+                            label: "C1 发光值";
+                            value <=> calib-c1;
+                        }
+
+                        FormField {
+                            label: "C2 发光值";
+                            value <=> calib-c2;
+                        }
+
+                        Rectangle {
+                            height: 12px;
+                        }
+
+                        HorizontalLayout {
+                            spacing: 10px;
+                            Button {
+                                text: "生成预览";
+                                primary: true;
+                                clicked => {
+                                    root.generate-preview("calibration");
+                                }
+                            }
+
+                            Button {
+                                text: "导出PNG";
+                                clicked => {
+                                    root.export-png("calibration");
+                                }
+                            }
+
+                            Button {
+                                text: "导出PDF";
+                                clicked => {
+                                    root.export-pdf("calibration");
+                                }
+                            }
+                        }
+
+                        Text {
+                            text: status;
+                            color: #888;
+                            font-size: 11px;
+                            horizontal-alignment: right;
+                        }
+                    }
+                }
+
+                if enc-page == "consumable": ScrollView {
+                    VerticalLayout {
+                        spacing: 8px;
+                        padding-bottom: 8px;
+                        Text {
+                            text: "耗材信息";
+                            font-size: 16px;
+                            font-weight: 700;
+                        }
+
+                        FormCombo {
+                            label: "耗材类型";
+                            index <=> consumable-type-index;
+                            model: ["激发液A", "激发液B"];
+                        }
+
+                        FormField {
+                            label: "耗材批号";
+                            value <=> consumable-lot;
+                        }
+
+                        FormField {
+                            label: "生产日期";
+                            value <=> consumable-prod-date;
+                        }
+
+                        FormField {
+                            label: "有效天数";
+                            value <=> consumable-valid-days;
+                        }
+
+                        FormField {
+                            label: "失效日期";
+                            value: consumable-expire-date;
+                            readonly: true;
+                        }
+
+                        FormField {
+                            label: "可用频次";
+                            value <=> consumable-freq;
+                        }
+
+                        FormField {
+                            label: "开瓶天数";
+                            value <=> consumable-open-days;
+                        }
+
+                        FormField {
+                            label: "数量";
+                            value <=> consumable-quantity;
+                        }
+
+                        Rectangle {
+                            height: 12px;
+                        }
+
+                        HorizontalLayout {
+                            spacing: 10px;
+                            Button {
+                                text: "生成预览";
+                                primary: true;
+                                clicked => {
+                                    root.generate-preview("consumable");
+                                }
+                            }
+
+                            Button {
+                                text: "导出PNG";
+                                clicked => {
+                                    root.export-png("consumable");
+                                }
+                            }
+
+                            Button {
+                                text: "导出PDF";
+                                clicked => {
+                                    root.export-pdf("consumable");
+                                }
+                            }
+                        }
+
+                        Text {
+                            text: status;
+                            color: #888;
+                            font-size: 11px;
+                            horizontal-alignment: right;
+                        }
+                    }
+                }
+
+                if enc-page == "quality": ScrollView {
+                    VerticalLayout {
+                        spacing: 8px;
+                        padding-bottom: 8px;
+                        Text {
+                            text: "质控品信息";
+                            font-size: 16px;
+                            font-weight: 700;
+                        }
+
+                        FormCombo {
+                            label: "项目名称";
+                            index <=> quality-project-index;
+                            model: project-names;
+                        }
+
+                        FormField {
+                            label: "项目编号";
+                            value: project-ids[quality-project-index];
+                            readonly: true;
+                        }
+
+                        FormField {
+                            label: "质控批号";
+                            value <=> quality-lot;
+                        }
+
+                        FormField {
+                            label: "生产日期";
+                            value <=> quality-prod-date;
+                        }
+
+                        FormField {
+                            label: "有效天数";
+                            value <=> quality-valid-days;
+                        }
+
+                        FormField {
+                            label: "失效日期";
+                            value: quality-expire-date;
+                            readonly: true;
+                        }
+
+                        FormField {
+                            label: "数量";
+                            value <=> quality-quantity;
+                        }
+
+                        HorizontalLayout {
+                            spacing: 8px;
+                            SmallField {
+                                label: "Q1";
+                                value <=> quality-q1;
+                            }
+
+                            SmallField {
+                                label: "SD1";
+                                value <=> quality-sd1;
+                            }
+                        }
+
+                        HorizontalLayout {
+                            spacing: 8px;
+                            SmallField {
+                                label: "Q2";
+                                value <=> quality-q2;
+                            }
+
+                            SmallField {
+                                label: "SD2";
+                                value <=> quality-sd2;
+                            }
+                        }
+
+                        Rectangle {
+                            height: 12px;
+                        }
+
+                        HorizontalLayout {
+                            spacing: 10px;
+                            Button {
+                                text: "生成预览";
+                                primary: true;
+                                clicked => {
+                                    root.generate-preview("quality");
+                                }
+                            }
+
+                            Button {
+                                text: "导出PNG";
+                                clicked => {
+                                    root.export-png("quality");
+                                }
+                            }
+
+                            Button {
+                                text: "导出PDF";
+                                clicked => {
+                                    root.export-pdf("quality");
+                                }
+                            }
+                        }
+
+                        Text {
+                            text: status;
+                            color: #888;
+                            font-size: 11px;
+                            horizontal-alignment: right;
+                        }
+                    }
+                }
             }
 
-            // Preview area
-            Rectangle { horizontal-stretch: 1;
-                border-width: 1px; border-color: Palette.border; border-radius: 6px;
-                background: Palette.alternate-background;
-                if !has-current-preview: Text { text: "点击「生成预览」查看条码"; color: #999; font-size: 14px; horizontal-alignment: center; vertical-alignment: center; }
-                if has-current-preview: Image { source: current-preview; image-fit: contain; width: 100%; height: 100%; }
+            VerticalLayout {
+                horizontal-stretch: 1;
+                spacing: 12px;
+                Rectangle {
+                    height: 265px;
+                    background: #F7FAFD;
+                    border-width: 1px;
+                    border-color: #D8E4F0;
+                    border-radius: 8px;
+                    clip: true;
+                    VerticalLayout {
+                        padding: 12px;
+                        spacing: 8px;
+                        HorizontalLayout {
+                            Text {
+                                text: "设置参数";
+                                font-size: 16px;
+                                font-weight: 700;
+                            }
+
+                            Rectangle {
+                                horizontal-stretch: 1;
+                            }
+
+                            Button {
+                                text: "重置当前页布局";
+                                clicked => {
+                                    root.reset-layout-page(enc-page);
+                                }
+                            }
+                        }
+
+                        Text {
+                            text: "先在下方预览中点选元素，再拖动或修改参数。位置会实时写入配置文件。";
+                            color: #5C6B79;
+                            font-size: 12px;
+                        }
+
+                        Text {
+                            text: "配置文件: Setting/rl-clia-layout.json";
+                            color: #7B8794;
+                            font-size: 12px;
+                        }
+
+                        if !selected-has-element: Text {
+                            text: "当前未选中元素";
+                            color: #8A97A6;
+                            font-size: 13px;
+                        }
+                        if selected-has-element: VerticalLayout {
+                            spacing: 8px;
+                            Text {
+                                text: selected-element-name + "  (" + selected-element-id + ")";
+                                font-size: 13px;
+                                font-weight: 600;
+                            }
+
+                            HorizontalLayout {
+                                spacing: 8px;
+                                SettingField {
+                                    label: "X";
+                                    value <=> selected-layout-x;
+                                    edited(v) => {
+                                        root.update-selected-layout(enc-page, "x", v);
+                                    }
+                                }
+
+                                SettingField {
+                                    label: "Y";
+                                    value <=> selected-layout-y;
+                                    edited(v) => {
+                                        root.update-selected-layout(enc-page, "y", v);
+                                    }
+                                }
+                            }
+
+                            HorizontalLayout {
+                                spacing: 8px;
+                                SettingField {
+                                    label: "宽";
+                                    value <=> selected-layout-width;
+                                    edited(v) => {
+                                        root.update-selected-layout(enc-page, "width", v);
+                                    }
+                                }
+
+                                SettingField {
+                                    label: "高";
+                                    value <=> selected-layout-height;
+                                    edited(v) => {
+                                        root.update-selected-layout(enc-page, "height", v);
+                                    }
+                                }
+                            }
+
+                            HorizontalLayout {
+                                spacing: 8px;
+                                SettingField {
+                                    label: "字号";
+                                    value <=> selected-font-size;
+                                    enabled: selected-element-kind == "text";
+                                    edited(v) => {
+                                        root.update-selected-layout(enc-page, "font_size", v);
+                                    }
+                                }
+
+                                CheckBox {
+                                    text: "加粗";
+                                    checked <=> selected-bold;
+                                    enabled: selected-element-kind == "text";
+                                    toggled => {
+                                        root.toggle-selected-bold(enc-page, self.checked);
+                                    }
+                                }
+
+                                Rectangle {
+                                    horizontal-stretch: 1;
+                                }
+                            }
+
+                            Text {
+                                text: selected-element-kind == "barcode" ? "条码支持拖动和改宽高" : "文本支持拖动、字号和加粗";
+                                color: #667788;
+                                font-size: 12px;
+                            }
+                        }
+                    }
+                }
+
+                Rectangle {
+                    horizontal-stretch: 1;
+                    vertical-stretch: 1;
+                    border-width: 1px;
+                    border-color: Palette.border;
+                    border-radius: 8px;
+                    background: Palette.alternate-background;
+                    if !layout-editor-ready: Text {
+                        text: "点击「生成预览」或直接切换页面开始调整布局";
+                        color: #999;
+                        font-size: 14px;
+                        horizontal-alignment: center;
+                        vertical-alignment: center;
+                    }
+                    if layout-editor-ready: editor-area := Rectangle {
+                        property <length> avail-width: self.width - 24px;
+                        property <length> avail-height: self.height - 24px;
+                        property <float> width-scale: self.avail-width / 660px;
+                        property <float> height-scale: self.avail-height / 580px;
+                        property <float> canvas-scale: self.width-scale < self.height-scale ? self.width-scale : self.height-scale;
+                        property <length> canvas-width: 660px * self.canvas-scale;
+                        property <length> canvas-height: 580px * self.canvas-scale;
+                        x: 12px;
+                        y: 12px;
+                        width: parent.width - 24px;
+                        height: parent.height - 24px;
+                        clip: true;
+
+                        Rectangle {
+                            x: (parent.width - parent.canvas-width) / 2;
+                            y: (parent.height - parent.canvas-height) / 2;
+                            width: parent.canvas-width;
+                            height: parent.canvas-height;
+                            background: white;
+                            border-width: 1px;
+                            border-color: #C9D3DC;
+                            border-radius: 4px;
+
+                            for item[i] in preview-elements: Rectangle {
+                                visible: item.visible;
+                                x: item.x * editor-area.canvas-scale * 1px;
+                                y: item.y * editor-area.canvas-scale * 1px;
+                                width: item.width * editor-area.canvas-scale * 1px;
+                                height: item.height * editor-area.canvas-scale * 1px;
+                                background: transparent;
+
+                                if item.kind == "text": Text {
+                                    text: item.text;
+                                    width: parent.width;
+                                    height: parent.height;
+                                    wrap: word-wrap;
+                                    horizontal-alignment: center;
+                                    vertical-alignment: center;
+                                    font-size: item.font_size * editor-area.canvas-scale * 1px;
+                                    font-weight: item.bold ? 700 : 400;
+                                    color: #111;
+                                }
+
+                                if item.kind == "barcode": Rectangle {
+                                    width: parent.width;
+                                    height: parent.height;
+                                    border-width: 1px;
+                                    border-color: #B5C6D6;
+                                    background: #FFFFFF;
+                                    if preview-barcode-visible: Image {
+                                        source: preview-barcode;
+                                        image-fit: fill;
+                                        width: parent.width;
+                                        height: parent.height;
+                                    }
+                                    if !preview-barcode-visible: Text {
+                                        text: "条码区域";
+                                        color: #8795A3;
+                                        font-size: 14px;
+                                        horizontal-alignment: center;
+                                        vertical-alignment: center;
+                                    }
+                                }
+
+                                drag := TouchArea {
+                                    property <float> last-dx: 0;
+                                    property <float> last-dy: 0;
+                                    mouse-cursor: move;
+                                    clicked => {
+                                        root.select-layout-element(enc-page, item.id);
+                                    }
+                                    pointer-event(event) => {
+                                        if (event.kind == PointerEventKind.down) {
+                                            root.select-layout-element(enc-page, item.id);
+                                            self.last-dx = 0;
+                                            self.last-dy = 0;
+                                        }
+                                        if (event.kind == PointerEventKind.up || event.kind == PointerEventKind.cancel) {
+                                            self.last-dx = 0;
+                                            self.last-dy = 0;
+                                        }
+                                    }
+                                    moved => {
+                                        if (!self.pressed || editor-area.canvas-scale <= 0) {
+                                            return;
+                                        }
+                                        let dx = (self.mouse-x - self.pressed-x) / (editor-area.canvas-scale * 1px);
+                                        let dy = (self.mouse-y - self.pressed-y) / (editor-area.canvas-scale * 1px);
+                                        root.drag-layout-element(enc-page, item.id, dx - self.last-dx, dy - self.last-dy);
+                                        self.last-dx = dx;
+                                        self.last-dy = dy;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
     }
 
-    // DECRYPT
-    if page == "dec": VerticalLayout { padding: 24px; spacing: 16px;
-        Text { text: "解密工具"; font-size: 20px; font-weight: 700; }
-        Text { text: "输入密文:"; font-size: 13px; font-weight: 600; }
-        Rectangle { height: 120px; border-width: 1px; border-color: Palette.border; border-radius: 4px;
-            TextEdit { x: 8px; y: 8px; width: parent.width - 16px; height: parent.height - 16px; text <=> decrypt-input; }
+    if page == "dec": VerticalLayout {
+        padding: 24px;
+        spacing: 16px;
+        Text {
+            text: "解密工具";
+            font-size: 20px;
+            font-weight: 700;
         }
-        HorizontalLayout { spacing: 12px;
-            Button { text: "解密"; primary: true; clicked => { root.decrypt-data(); } }
-            Button { text: "返回首页"; clicked => { root.page = "home"; } }
+
+        Text {
+            text: "输入密文:";
+            font-size: 13px;
+            font-weight: 600;
         }
-        Text { text: "解密结果:"; font-size: 13px; font-weight: 600; }
-        Rectangle { vertical-stretch: 1; border-width: 1px; border-color: Palette.border; border-radius: 4px; background: #F8F8F8;
-            ScrollView { Text { x: 8px; y: 8px; width: parent.width - 16px; text: decrypt-output; font-size: 13px; font-family: "monospace"; wrap: word-wrap; } }
+
+        Rectangle {
+            height: 120px;
+            border-width: 1px;
+            border-color: Palette.border;
+            border-radius: 4px;
+            TextEdit {
+                x: 8px;
+                y: 8px;
+                width: parent.width - 16px;
+                height: parent.height - 16px;
+                text <=> decrypt-input;
+            }
+        }
+
+        HorizontalLayout {
+            spacing: 12px;
+            Button {
+                text: "解密";
+                primary: true;
+                clicked => {
+                    root.decrypt-data();
+                }
+            }
+
+            Button {
+                text: "返回首页";
+                clicked => {
+                    root.page = "home";
+                }
+            }
+        }
+
+        Text {
+            text: "解密结果:";
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        Rectangle {
+            vertical-stretch: 1;
+            border-width: 1px;
+            border-color: Palette.border;
+            border-radius: 4px;
+            background: #F8F8F8;
+            ScrollView {
+                Text {
+                    x: 8px;
+                    y: 8px;
+                    width: parent.width - 16px;
+                    text: decrypt-output;
+                    font-size: 13px;
+                    font-family: "monospace";
+                    wrap: word-wrap;
+                }
+            }
         }
     }
 
-    // Toast
     property <float> toast-alpha: toast-visible ? 1.0 : 0.0;
     animate toast-alpha { duration: 250ms; }
-    Timer { interval: 2000ms; running: toast-visible; triggered => { toast-visible = false; } }
-    Rectangle { opacity: toast-alpha; x: (parent.width - 300px) / 2; y: parent.height - 60px; width: 300px; height: 36px; background: #333; border-radius: 18px;
-        Text { text: toast-msg; color: white; font-size: 13px; horizontal-alignment: center; vertical-alignment: center; }
-        TouchArea { clicked => { toast-visible = false; } }
+    Timer {
+        interval: 2000ms;
+        running: toast-visible;
+        triggered => {
+            toast-visible = false;
+        }
+    }
+
+    Rectangle {
+        opacity: toast-alpha;
+        x: (parent.width - 300px) / 2;
+        y: parent.height - 60px;
+        width: 300px;
+        height: 36px;
+        background: #333;
+        border-radius: 18px;
+        Text {
+            text: toast-msg;
+            color: white;
+            font-size: 13px;
+            horizontal-alignment: center;
+            vertical-alignment: center;
+        }
+
+        TouchArea {
+            clicked => {
+                toast-visible = false;
+            }
+        }
     }
 }

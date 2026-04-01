@@ -7,6 +7,7 @@ mod app;
 mod barcode;
 mod config;
 mod encryptor;
+mod layout;
 
 fn main() {
     app::run();

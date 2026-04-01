@@ -1,0 +1,258 @@
+{
+  "reagent": {
+    "elements": [
+      {
+        "id": "title",
+        "kind": "text",
+        "x": 0.0,
+        "y": 16.892618,
+        "width": 660.0,
+        "height": 44.0,
+        "font_size": 32.0,
+        "bold": true
+      },
+      {
+        "id": "subtitle1",
+        "kind": "text",
+        "x": 0.0,
+        "y": 67.75167,
+        "width": 660.0,
+        "height": 30.0,
+        "font_size": 22.0,
+        "bold": false
+      },
+      {
+        "id": "subtitle2",
+        "kind": "text",
+        "x": 0.0,
+        "y": 99.07383,
+        "width": 660.0,
+        "height": 24.0,
+        "font_size": 18.0,
+        "bold": false
+      },
+      {
+        "id": "barcode",
+        "kind": "barcode",
+        "x": 31.107382,
+        "y": 128.99306,
+        "width": 600.0,
+        "height": 300.0,
+        "font_size": 0.0,
+        "bold": false
+      },
+      {
+        "id": "lot",
+        "kind": "text",
+        "x": 0.0,
+        "y": 448.8926,
+        "width": 660.0,
+        "height": 28.0,
+        "font_size": 23.0,
+        "bold": false
+      },
+      {
+        "id": "prod_date",
+        "kind": "text",
+        "x": 0.0,
+        "y": 490.0,
+        "width": 660.0,
+        "height": 28.0,
+        "font_size": 23.0,
+        "bold": false
+      },
+      {
+        "id": "expire_date",
+        "kind": "text",
+        "x": 0.0,
+        "y": 530.0,
+        "width": 660.0,
+        "height": 28.0,
+        "font_size": 23.0,
+        "bold": false
+      }
+    ]
+  },
+  "calibration": {
+    "elements": [
+      {
+        "id": "title",
+        "kind": "text",
+        "x": 0.0,
+        "y": 18.0,
+        "width": 660.0,
+        "height": 44.0,
+        "font_size": 32.0,
+        "bold": true
+      },
+      {
+        "id": "subtitle1",
+        "kind": "text",
+        "x": 0.0,
+        "y": 64.429535,
+        "width": 660.0,
+        "height": 30.0,
+        "font_size": 28.0,
+        "bold": false
+      },
+      {
+        "id": "barcode",
+        "kind": "barcode",
+        "x": 30.0,
+        "y": 98.0,
+        "width": 600.0,
+        "height": 300.0,
+        "font_size": 0.0,
+        "bold": false
+      },
+      {
+        "id": "lot",
+        "kind": "text",
+        "x": 0.0,
+        "y": 412.46307,
+        "width": 660.0,
+        "height": 28.0,
+        "font_size": 23.0,
+        "bold": false
+      },
+      {
+        "id": "prod_date",
+        "kind": "text",
+        "x": 0.0,
+        "y": 458.0,
+        "width": 660.0,
+        "height": 28.0,
+        "font_size": 23.0,
+        "bold": false
+      },
+      {
+        "id": "expire_date",
+        "kind": "text",
+        "x": 0.0,
+        "y": 498.0,
+        "width": 660.0,
+        "height": 28.0,
+        "font_size": 23.0,
+        "bold": false
+      }
+    ]
+  },
+  "consumable": {
+    "elements": [
+      {
+        "id": "title",
+        "kind": "text",
+        "x": 0.0,
+        "y": 16.892618,
+        "width": 660.0,
+        "height": 44.0,
+        "font_size": 32.0,
+        "bold": true
+      },
+      {
+        "id": "barcode",
+        "kind": "barcode",
+        "x": 30.0,
+        "y": 80.89262,
+        "width": 600.0,
+        "height": 300.0,
+        "font_size": 0.0,
+        "bold": false
+      },
+      {
+        "id": "lot",
+        "kind": "text",
+        "x": 0.0,
+        "y": 402.0,
+        "width": 660.0,
+        "height": 28.0,
+        "font_size": 23.0,
+        "bold": false
+      },
+      {
+        "id": "prod_date",
+        "kind": "text",
+        "x": 0.0,
+        "y": 442.0,
+        "width": 660.0,
+        "height": 28.0,
+        "font_size": 23.0,
+        "bold": false
+      },
+      {
+        "id": "expire_date",
+        "kind": "text",
+        "x": 0.0,
+        "y": 482.0,
+        "width": 660.0,
+        "height": 28.0,
+        "font_size": 23.0,
+        "bold": false
+      }
+    ]
+  },
+  "quality": {
+    "elements": [
+      {
+        "id": "title",
+        "kind": "text",
+        "x": 0.0,
+        "y": 18.0,
+        "width": 660.0,
+        "height": 44.0,
+        "font_size": 32.0,
+        "bold": true
+      },
+      {
+        "id": "subtitle1",
+        "kind": "text",
+        "x": 0.0,
+        "y": 65.53692,
+        "width": 660.0,
+        "height": 30.0,
+        "font_size": 28.0,
+        "bold": false
+      },
+      {
+        "id": "barcode",
+        "kind": "barcode",
+        "x": 30.0,
+        "y": 98.0,
+        "width": 600.0,
+        "height": 300.0,
+        "font_size": 0.0,
+        "bold": false
+      },
+      {
+        "id": "lot",
+        "kind": "text",
+        "x": 0.0,
+        "y": 418.0,
+        "width": 660.0,
+        "height": 28.0,
+        "font_size": 23.0,
+        "bold": false
+      },
+      {
+        "id": "prod_date",
+        "kind": "text",
+        "x": 0.0,
+        "y": 458.0,
+        "width": 660.0,
+        "height": 28.0,
+        "font_size": 23.0,
+        "bold": false
+      },
+      {
+        "id": "expire_date",
+        "kind": "text",
+        "x": 0.0,
+        "y": 498.0,
+        "width": 660.0,
+        "height": 28.0,
+        "font_size": 23.0,
+        "bold": false
+      }
+    ]
+  }
+}
