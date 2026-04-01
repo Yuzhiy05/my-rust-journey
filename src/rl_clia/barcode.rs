@@ -188,9 +188,10 @@ pub fn generate_pdf(images: &[GrayImage], output_path: &str) -> Result<(), Strin
             page.parent(pages_id);
             page.contents(cont_ids[pi]);
             let mut res = page.resources();
+            let mut x_objects = res.x_objects();
             for (i, _) in page_imgs.iter().enumerate() {
-                res.pair(
-                    Name(format!("Im{}", start + i).as_bytes()),
+                x_objects.pair(
+                    Name(format!("Im{}", start + i).as_bytes().into()),
                     xobj_ids[start + i],
                 );
             }
